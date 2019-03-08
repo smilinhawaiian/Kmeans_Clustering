@@ -77,6 +77,17 @@ import statistics
 
 
 # ////////
+if __name__ == "__main__":
 
+    # Read in traning and test sets
+    train_data = pd.read_csv("data/optdigits.train", header=None).values
+    test_data = pd.read_csv("data/optdigits.test", header=None).values
+    print("\n")
 
+    # for testing ////
+    print("train_data: \n",train_data)
+    print("\n")
+    print("test_data: \n",test_data)
+    print("\n")
+    #
 
