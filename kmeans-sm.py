@@ -71,9 +71,9 @@ def get_time(start_time, end_time, name, optional_num):
     n_sec = (elapsed % 60)
     n_min = elapsed / 60
     if optional_num < 0:
-        print("%s run time: %d minutes, %d seconds" % (name, n_min, n_sec))
+        print("%s run time: %d minutes, %d seconds\n" % (name, n_min, n_sec))
     else:
-        print("%s %d \nRun time: %d minutes, %d seconds" % (name, optional_num, n_min, n_sec))
+        print("%s %d \nRun time: %d minutes, %d seconds\n" % (name, optional_num, n_min, n_sec))
 
 
 # main program starts here
@@ -94,14 +94,15 @@ if __name__ == "__main__":
 
     print("----------------------Pre-processing data----------------------")
 
+    print("")
     # Read in data set
     c_data = pd.read_csv('data/cluster_dataset.csv', header=None).values
 
     # Request r number of runs to run each set
-    r = 3  # edit to make sure we request this
-    print(f"r is set to default: {r}")
+    # r = 3  # edit to make sure we request this
+    # print(f"r is set to default: {r}")
     r = int(input("Please input number of r runs: "))
-    print(f"r is set to input value: {r}")
+    print(f"r is set to value: {r}")
 
     # Do any other processing necessary here
     # k = [2, 3, 5, 7, 9, 10, 15]
@@ -113,32 +114,56 @@ if __name__ == "__main__":
 
     print("---------------------------------------------------------------")
 
-    # start a timer for the run
-    run_start = time.time()
-
     # For each k number of clusters:
     for num_clusters in k:
-        print("---------------------------------------------------------------")
+        # print("---------------------------------------------------------------")
         print(f"\nFor num_clusters {num_clusters}\n")
         for run in range(r):
-            num_rows, num_cols = c_data.shape
-            # print(f"row 5: {c_data[5]}")
-            print(f"c_data: {type(c_data)} {c_data.shape}")
-            # print(f"{num_rows}, {num_cols}")
-            # clusters = []  # Initialize seeds randomly
-            # clusters = np.random.uniform(low=-0.05, high=0.05, size=(r, c))
-            # np.random.choice(number_of_rows, size=2, replace=False)
-            # end timer for r run
+            # start a timer for the run
+            run_start = time.time()
+
+            # select k random centroids
+
+            # centroids = c_data[np.random.choice(c_data.shape[0], 2, replace=False), :] #this prints a 2x2 each run
+            centroids = c_data[np.random.choice(c_data.shape[0], num_clusters, replace=False), :]
+            print(f"centroids chosen: {centroids}")
+
             curr = time.time()
             get_time(run_start, curr, "r-run ", run)
-
-    print("---------------------------------------------------------------")
-
+        print("---------------------------------------------------------------")
 
     # print total program time
     end = time.time()
     get_time(start, end, "\nTotal program", -1)
-    print("")
 
     print("---------------------------------------------------------------")
 
+
+
+# STUFF TO USE FOR TESTING/PRINTS/ETC
+
+
+# random_indices = np.random.choice(num_rows, k, replace=False)  # from numrows choose 3rowsof5(k=[3,5])
+# print(f"random indices {random_indices}")
+
+# num_rows = c_data.shape[0]
+# print(f"num_rows {num_rows}")
+# random_indices = np.random.choice(number_of_rows, size=2, replace=False)
+# random_rows = an_array[random_indices, :]
+
+# print(f"num_rows: {type(num_rows)} {len(num_rows)}")
+# centroids = np.random.choice(c_data, num_clusters, replace=False)
+# print(f"centroids chosen: {centroids}")
+# print(f"row 5: {c_data[5]}")
+# print(f"c_data: {type(c_data)} {c_data.shape}")
+# print(f"{num_rows}, {num_cols}")
+# clusters = []  # Initialize seeds randomly
+# clusters = np.random.uniform(low=-0.05, high=0.05, size=(r, c))
+# np.random.choice(number_of_rows, size=2, replace=False)
+# end timer for r run
+
+# num_rows, num_cols = c_data.shape
+            # random_indices = np.random.choice(num_rows, size=num_clusters, replace=False)
+            # print(f"indices chosen: {random_indices}")
+            # centroids = c_data[random_indices:]
+            # print(f"centroids chosen: {centroids}")
