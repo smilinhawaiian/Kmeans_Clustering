@@ -1,2 +1,4 @@
 # Kmeans_Clustering
-CS445-ML-Project5
+CS445-ML
+
+K-Means and Fuzzy C-Means
