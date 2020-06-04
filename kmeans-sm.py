@@ -99,6 +99,9 @@ if __name__ == "__main__":
 
     # Request r number of runs to run each set
     r = 3  # edit to make sure we request this
+    print(f"r is set to default: {r}")
+    r = int(input("Please input number of r runs: "))
+    print(f"r is set to input value: {r}")
 
     # Do any other processing necessary here
     # k = [2, 3, 5, 7, 9, 10, 15]
