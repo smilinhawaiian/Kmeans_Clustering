@@ -1,8 +1,8 @@
 # Name:         Sharice Mayer
 # Due Date:     June 13, 2020
 # Course:       CS445 ML - Spring 2020
-# Assignment:   Program #3
-# Topic:        K-Means and Fuzzy C-Means
+# Assignment:   Program #3 Part 1
+# Topic:        K-Means
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 # Cluster and Classify cluster_dataset.txt
-# using K-Means clustering algorithm, then Fuzzy C-Means
+# using K-Means clustering algorithm
 
 # Data set:
 # The data set is 2d data (for ease of visualization)
@@ -32,57 +32,24 @@ import matplotlib.cm as cm
 # - Run clustering on training data with k = {2,3,5,7,9,10,15}
 #     Obtain k final cluster centers
 #     Initial cluster centers chosen at random from training examples
-#     Compute Weights
-#     Update Centroids
+#     Iterate next steps until no change to centroids
+#       Compute Weights - Compute the sum of the squared distance between data points and all centroids.
+#       Assign each data point to the closest cluster (centroid).
+#       Update Centroids for the clusters by taking the average of the all data points that belong to each cluster.
 #     Stop iterating K-Means when all cluster centers stop changing
-#     ** some empty clusters are ok?
 # - Choose the run(from the r number of runs) that yields the smallest sum-of-squares-error
 #     For this run in report give sum-of-squares-error,
 #     and include 2-d plot of data points and clusters
 #     for the resulting clustering on the data
-#     ** Leave out empty clusters in calculating these metrics?
 # - Repeat for several values of k
-
-# Part 2 - Fuzzy C-Means
-# Repeat r times with different random number seeds
-# - Run clustering on data with k = {2,3,5,7,9,10,15}
-#     Obtain k final cluster centers:
-#     Initial cluster centers chosen at random from training examples
-#     Compute Weights
-#     Update Centroids
-#     Stop iterating Fuzzy C-Means when all cluster centers stop changing
-# - Select the solution giving smallest sum-of-squares error over r runs
-#     For this run in report give sum-of-squares-error,
-#     and include 2-d plot of data points and clusters
-#     for the resulting clustering on the data
-# Again run for several values of k
-
-# Include in report:
-#     Short Description of experiments
-#     Experimental Results Summary
-#     2-d Plots
-# Send in report and readable code
-
-# 1. Specify number of clusters K.
-# 2. Initialize centroids by first shuffling the dataset and then randomly selecting K data points for the centroids
-# without replacement.
-# 3. Keep iterating until there is no change to the centroids. i.e assignment of data points to clusters isn't changing.
-#        Compute the sum of the squared distance between data points and all centroids.
-#        Assign each data point to the closest cluster (centroid).
-#        Compute the centroids for the clusters by taking the average of the all data points that belong to each cluster.
 
 
 # my kmeans algorithm
     # for each run
-
     # initialize a list of centroids
-
-    # make a copy of given dataset as stated above
-
+    # make a copy of given dataset
     # perform k-means clustering
-
     # calculate Sum of Squared Errors
-
     # return the results
 
 
@@ -166,7 +133,6 @@ if __name__ == "__main__":
     print("")
 
     print("----------------------Pre-processing data----------------------")
-
     print("")
 
     # print(f" type: {type()} values = \n {}\n")
@@ -174,31 +140,16 @@ if __name__ == "__main__":
     # Request k number of clusters
     # k = int(input("Please input number of k clusters: "))
     # print(f"k is set to value: {k}")
-    k = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # to run with several k values in succession
-    # k = [8, 9, 10, 11, 12, 13, 14, 15]  # to run with several k values in succession
+    # k = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # to run with several k values in succession
+    k = [3]
 
     # Request r number of runs to run each set
     r = int(input("Please input number of r runs: "))
     print(f"r is set to value: {r}")
 
     # Read in data set as pd dataframe
-    # c_data = pd.read_csv('data/cluster_dataset.csv', header=None, delim_whitespace=True, na_filter=False).values ##RL
-    # print(f"c_data type: {type(c_data)} values = \n {c_data}")
     data_reference = pd.read_csv("data/cluster_dataset.csv", delim_whitespace=True, names=['xcoord','ycoord'])
     # print(f"\ndata_reference type: {type(data_reference)} values = \n {data_reference}\n")
-    '''
-    data_reference type: <class 'pandas.core.frame.DataFrame'> values = 
-             xcoord    ycoord
-    0    -0.169513 -0.243970
-    1    -1.462618 -1.333294
-    2     0.769671  0.849244
-    ...        ...       ...
-    1497  2.114334  1.031347
-    1498  2.061401 -0.067838
-    1499  1.885700  1.003853
-    
-    [1500 rows x 2 columns]
-    '''
 
     # end timer for processing
     curr = time.time()
@@ -206,16 +157,14 @@ if __name__ == "__main__":
 
     print("---------------------------------------------------------------")
 
-
     # For each k number of clusters:
     for num_clusters in k:  # when k = [3, 5] instead of an integer
     # if k > 0:
-        # print(f"\nFor num_clusters {num_clusters}\n")
+        print(f"\n\tK Clusters = {num_clusters} \n")
         lsse = 999999999.999999999
         sse_runs = list(range(r))
         # best_clusters = list(range(k))
         best_clusters = list(range(num_clusters))
-        print(f"\n\tK Clusters = {num_clusters} \n")
         # run r times
         for run in range(r):
             # start a timer for the run
@@ -224,45 +173,23 @@ if __name__ == "__main__":
             # add a column with just points
             data_reference['(xcoord,ycoord)'] = data_reference.apply(
                 lambda point: np.array((point['xcoord'], point['ycoord'])), axis=1)
-            # print(f"data_reference type: {type(data_reference)} values = \n {data_reference}\n")
 
             # Add a column with a cluster label, initializing to 0
             data_reference['Cluster'] = 0
-            # print(f"data_reference type: {type(data_reference)} values = \n {data_reference}\n")
 
             # convert points into np array for calculations
             data_points = np.array(data_reference['(xcoord,ycoord)'])
-            # print(f"data_points type: {type(data_points)} values = \n {data_points}\n")
-            # print(f"data_points[0] type: {type(data_points[0])} values = \n {data_points[0]}\n")
-            '''
-            data_points type: <class 'numpy.ndarray'> values = 
-             [array([-0.169513, -0.24397 ]) array([-1.462618, -1.333294])
-             array([0.769671, 0.849244]) ... array([2.114334, 1.031347])
-             array([ 2.061401, -0.067838]) array([1.8857  , 1.003853])]
-            data_points[0] type: <class 'numpy.ndarray'> values = 
-             [-0.169513 -0.24397 ]
-            '''
 
             # make a copy of the data set for run
             data_values = data_reference.copy()  # do I need this?
 
             # run k-means algorithm
-
-            # select k random centroids(centers) -- centroids represent the mean after initial rand selection
-            # rand_indices = np.random.choice(c_data.shape[0], size=k)
-            # centroids =  c_data[rand_indices, :]
-            # centroids = c_data[np.random.choice(c_data.shape[0], k, replace=False), :]
-            # print(f"centroids type: {type(centroids)} centroids value: \n{centroids}")
-            # centroids.append(data_points[np.random.randint(0, data_points.shape[0])]) # picks a single rand point
-
             # select k random centroids(centers) -- centroids represent the mean after initial rand selection
             # initial_centroids = data_points[np.random.choice(data_points.shape[0], k, replace=False)]
             initial_centroids = data_points[np.random.choice(data_points.shape[0], num_clusters, replace=False)]
-            # print(f"initial_centroids type: {type(initial_centroids)} centroids value: \n{initial_centroids}")
 
             centroids = initial_centroids
             new_centroids = centroids
-            # print(f"data_points shape: {data_points.shape}")  # (1500,)
             # While centroids are changing
             change = True
             while change:
@@ -271,18 +198,13 @@ if __name__ == "__main__":
 
                 # set new clusters by group
                 new_clusters = data_values.groupby('NewCluster')
-                # print(f"new clusters: {new_clusters}\n")
-                # new clusters: <pandas.core.groupby.generic.DataFrameGroupBy object at 0x10fa86e50>
 
                 # calculate new cluster centroids
                 for index, cluster in new_clusters:
-                    # print(f"cluster: \n {cluster}\n")
-                    cluster_points = np.array(cluster['(xcoord,ycoord)'])
-                    # print(f"cluster_points dimension: {cluster_points.shape}\n {cluster_points}\n")
                     # calculate the new centroid of each cluster closest to the mean
+                    cluster_points = np.array(cluster['(xcoord,ycoord)'])
                     cluster_mean = np.array([cluster['xcoord'].mean(), cluster['ycoord'].mean()])
                     new_centroids[index] = cluster_points[nearest_point(cluster_points, cluster_mean)]
-                    # print(f"new_centroids[index]: {new_centroids[index]}\n")
 
                 # print current and new centroids
                 # print(f"\nnew_centroids: {new_centroids}\n")
@@ -300,6 +222,7 @@ if __name__ == "__main__":
                     # update centroids
                     centroids = new_centroids
 
+            # calculate sse for run
             sse = 0
             final_clusters = data_values.groupby('NewCluster')
             for index, cluster in final_clusters:
@@ -307,7 +230,7 @@ if __name__ == "__main__":
                 centroid = centroids[index]
                 for point in cluster_points:
                     sse += np.sum(np.sum((point - centroid)**2))
-            # prrnt sse
+            # print sse
             # print(f"\nRun's final sse: {sse}\n")
 
             # sse append
@@ -324,7 +247,7 @@ if __name__ == "__main__":
             get_time(run_start, curr, "run ", (run+1))
 
         # print lowest sse of runs
-        print(f"\nsse all {r} runs = {sse_runs}\n")   # for testing
+        print(f"\nsse all {r} runs = {sse_runs}\n")
         print(f"\nlowest sse of all {r} runs = {lsse}\n")
 
         # plot the best run for this k
@@ -338,46 +261,4 @@ if __name__ == "__main__":
 
     print("---------------------------------------------------------------")
 
-
-
-# STUFF TO USE FOR TESTING/PRINTS/ETC
-
-
-# random_indices = np.random.choice(num_rows, k, replace=False)  # from numrows choose 3rowsof5(k=[3,5])
-# print(f"random indices {random_indices}")
-
-# num_rows = c_data.shape[0]
-# print(f"num_rows {num_rows}")
-# random_indices = np.random.choice(number_of_rows, size=2, replace=False)
-# random_rows = an_array[random_indices, :]
-
-# print(f"num_rows: {type(num_rows)} {len(num_rows)}")
-# centroids = np.random.choice(c_data, num_clusters, replace=False)
-# print(f"centroids chosen: {centroids}")
-# print(f"row 5: {c_data[5]}")
-# print(f"c_data: {type(c_data)} {c_data.shape}")
-# print(f"{num_rows}, {num_cols}")
-# clusters = []  # Initialize seeds randomly
-# clusters = np.random.uniform(low=-0.05, high=0.05, size=(r, c))
-# np.random.choice(number_of_rows, size=2, replace=False)
-# end timer for r run
-
-# num_rows, num_cols = c_data.shape
-            # random_indices = np.random.choice(num_rows, size=num_clusters, replace=False)
-            # print(f"indices chosen: {random_indices}")
-            # centroids = c_data[random_indices:]
-            # print(f"centroids chosen: {centroids}")
-
-# ------------------------------------
-# select k random centroids(centers)
-# centroids represent the mean after initial rand selection
-# centroids = c_data[np.random.choice(c_data.shape[0], num_clusters, replace=False), :]
-# centroids = c_data[np.random.choice(c_data.shape[0], k, replace=False), :]
-# print(f"centroids chosen: \n{centroids}")
-
-# test if this does the same thing -- yes, it does
-# random_indices = np.random.choice(c_data.shape[0], size=k)
-# print(f"random indices chosen: \n{random_indices}")
-# alt_cent =  c_data[random_indices, :]
-# print(f"alt_centroids chosen: \n{alt_cent}")
-# ------------------------------------
+    print("")
