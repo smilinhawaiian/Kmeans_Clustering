@@ -9,6 +9,8 @@ import pandas as pd
 import math
 import statistics
 import time
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 # Cluster and Classify cluster_dataset.txt
 # using K-Means clustering algorithm, then Fuzzy C-Means
@@ -72,7 +74,7 @@ import time
 
 # my kmeans algorithm
     # for each run
-    
+
     # initialize a list of centroids
 
     # make a copy of given dataset as stated above
@@ -82,6 +84,37 @@ import time
     # calculate Sum of Squared Errors
 
     # return the results
+
+
+# print final clusters
+def plot_clusters(clusters, sse, runs):
+    # make it pretty
+    num_clusters = len(clusters)
+    intsse = int(sse)
+    colors = cm.gist_rainbow(np.linspace(0, 1, len(clusters)))
+    for index, cluster in clusters:
+        # clusters are different colors
+        plt.scatter(cluster['xcoord'], cluster['ycoord'], s=num_clusters, color=colors[index])
+
+    plt.title('K-means Clustering with K = ' +str(len(clusters))+' runs = ' + str(runs)+' (SSE = '+str(sse)+')')
+    plt.xlabel('attribute 1')
+    plt.ylabel('attribute 2')
+    plt.savefig('Kmeans_' + str(len(clusters)) + '_best_r' + str(runs) + '_sse' + str(intsse) + '.png')
+
+
+def plot_run(clusters, sse, run, runs):
+    # make it pretty
+    num_clusters = len(clusters)
+    intsse = int(sse)
+    colors = cm.gist_rainbow(np.linspace(0, 1, len(clusters)))
+    for index, cluster in clusters:
+        # clusters are different colors
+        plt.scatter(cluster['xcoord'], cluster['ycoord'], s=num_clusters, color=colors[index])
+
+    plt.title('K-means Clustering with K = ' + str(len(clusters)) + ' at run ' + str(run) +' of '+ str(runs)+ ' (SSE = '+str(sse)+')')
+    plt.xlabel('attribute 1')
+    plt.ylabel('attribute 2')
+    plt.savefig('Kmeans_' + str(len(clusters)) + '_r' + str(run) + 'of' + str(runs) + '_sse' + str(intsse) + '.png')
 
 
 # return the closest point to the mean given
@@ -139,9 +172,10 @@ if __name__ == "__main__":
     # print(f" type: {type()} values = \n {}\n")
 
     # Request k number of clusters
-    k = int(input("Please input number of k clusters: "))
-    print(f"k is set to value: {k}")
-    # k = [2, 3, 5, 7, 9, 10, 15]  # to run with several k values in succession
+    # k = int(input("Please input number of k clusters: "))
+    # print(f"k is set to value: {k}")
+    k = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # to run with several k values in succession
+    # k = [8, 9, 10, 11, 12, 13, 14, 15]  # to run with several k values in succession
 
     # Request r number of runs to run each set
     r = int(input("Please input number of r runs: "))
@@ -174,11 +208,14 @@ if __name__ == "__main__":
 
 
     # For each k number of clusters:
-    # for num_clusters in k:  # when k = [3, 5] instead of an integer
-    if k > 0:
+    for num_clusters in k:  # when k = [3, 5] instead of an integer
+    # if k > 0:
         # print(f"\nFor num_clusters {num_clusters}\n")
         lsse = 999999999.999999999
         sse_runs = list(range(r))
+        # best_clusters = list(range(k))
+        best_clusters = list(range(num_clusters))
+        print(f"\n\tK Clusters = {num_clusters} \n")
         # run r times
         for run in range(r):
             # start a timer for the run
@@ -219,8 +256,9 @@ if __name__ == "__main__":
             # centroids.append(data_points[np.random.randint(0, data_points.shape[0])]) # picks a single rand point
 
             # select k random centroids(centers) -- centroids represent the mean after initial rand selection
-            initial_centroids = data_points[np.random.choice(data_points.shape[0], k, replace=False)]
-            print(f"initial_centroids type: {type(initial_centroids)} centroids value: \n{initial_centroids}")
+            # initial_centroids = data_points[np.random.choice(data_points.shape[0], k, replace=False)]
+            initial_centroids = data_points[np.random.choice(data_points.shape[0], num_clusters, replace=False)]
+            # print(f"initial_centroids type: {type(initial_centroids)} centroids value: \n{initial_centroids}")
 
             centroids = initial_centroids
             new_centroids = centroids
@@ -228,9 +266,6 @@ if __name__ == "__main__":
             # While centroids are changing
             change = True
             while change:
-            # for i in range(3):  #  for testing...
-                # print("\nNEW LOOP\n")
-
                 # Form K clusters by assigning each point to its closest centroid
                 data_values['NewCluster'] = data_values['(xcoord,ycoord)'].apply(lambda p: nearest_centroid(centroids, p))
 
@@ -255,11 +290,11 @@ if __name__ == "__main__":
 
                 # check to see if cluster points have changed
                 if data_values['Cluster'].equals(data_values['NewCluster']):
-                    print("\n\tEqual! Woot. \n")  # done!
+                    # print("\n\tEqual! Woot. \n")  # done!
                     final_clusters = data_values['Cluster']
                     change = False
                 else:
-                    print("\n\tNot equal. Keep calculating.\n")
+                    # print("\n\tNot equal. Keep calculating.\n")
                     # update cluster column
                     data_values['Cluster'] = data_values['NewCluster']
                     # update centroids
@@ -278,15 +313,22 @@ if __name__ == "__main__":
             # sse append
             if sse < lsse:
                 lsse = sse
+                best_clusters = final_clusters
             sse_runs[run] = sse
+
+            # print this run
+            plot_run(final_clusters, sse, run+1, r)
 
             # calculate and print run time
             curr = time.time()
-            get_time(run_start, curr, "r-run ", (run+1))
+            get_time(run_start, curr, "run ", (run+1))
 
         # print lowest sse of runs
-        print(f"\nsse all runs = {sse_runs}\n")   # for testing
-        print(f"\nlowest sse of all runs = {lsse}\n")
+        print(f"\nsse all {r} runs = {sse_runs}\n")   # for testing
+        print(f"\nlowest sse of all {r} runs = {lsse}\n")
+
+        # plot the best run for this k
+        plot_clusters(best_clusters, lsse, r)
 
         print("---------------------------------------------------------------")
 
