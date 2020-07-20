@@ -240,7 +240,7 @@ if __name__ == "__main__":
             sse_runs[run] = sse
 
             # print this run
-            plot_run(final_clusters, sse, run+1, r)
+            # plot_run(final_clusters, sse, run+1, r)
 
             # calculate and print run time
             curr = time.time()
